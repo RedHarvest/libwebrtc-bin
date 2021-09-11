@@ -51,7 +51,7 @@ build: patch
 	vpython3 $(SRC_DIR)/tools_webrtc/android/build_aar.py \
 	  --build-dir $(BUILD_DIR)/aar \
 	  --output $(BUILD_DIR)/libwebrtc.aar \
-	  --arch armeabi-v7a arm64-v8a \
+	  --arch armeabi-v7a arm64-v8a x86 x86_64 \
 	  --extra-gn-args '$(CC_WRAPPER) is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true'
 
 	cd $(SRC_DIR) && \
