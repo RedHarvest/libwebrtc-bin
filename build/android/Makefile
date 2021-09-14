@@ -63,6 +63,16 @@ build: patch
 	vpython3 $(DEPOT_TOOLS_DIR)/gn.py gen $(BUILD_DIR)/static/arm64-v8a --args='$(CC_WRAPPER) target_os="android" target_cpu="arm64" is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false use_custom_libcxx=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true' && \
 	ninja -C $(BUILD_DIR)/static/arm64-v8a && \
 	ninja -C $(BUILD_DIR)/static/arm64-v8a native_api
+	
+	cd $(SRC_DIR) && \
+	vpython3 $(DEPOT_TOOLS_DIR)/gn.py gen $(BUILD_DIR)/static/x86 --args='$(CC_WRAPPER) target_os="android" target_cpu="x86" is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false use_custom_libcxx=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true' && \
+	ninja -C $(BUILD_DIR)/static/x86 && \
+	ninja -C $(BUILD_DIR)/static/x86 native_api
+	
+	cd $(SRC_DIR) && \
+	vpython3 $(DEPOT_TOOLS_DIR)/gn.py gen $(BUILD_DIR)/static/x86_64 --args='$(CC_WRAPPER) target_os="android" target_cpu="x64" is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false use_custom_libcxx=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true' && \
+	ninja -C $(BUILD_DIR)/static/x86_64 && \
+	ninja -C $(BUILD_DIR)/static/x86_64 native_api
 
 	cd $(BUILD_DIR)/static/armeabi-v7a/obj && \
 	rm -f sdk/android/libjingle_peerconnection_so/jni_onload.o && \
@@ -71,6 +81,14 @@ build: patch
 	cd $(BUILD_DIR)/static/arm64-v8a/obj && \
 	rm -f sdk/android/libjingle_peerconnection_so/jni_onload.o && \
 	$(SRC_DIR)/third_party/llvm-build/Release+Asserts/bin/llvm-ar -rc $(BUILD_DIR)/static/arm64-v8a/libwebrtc.a `find . -name '*.o'`
+	
+	cd $(BUILD_DIR)/static/x86/obj && \
+	rm -f sdk/android/libjingle_peerconnection_so/jni_onload.o && \
+	$(SRC_DIR)/third_party/llvm-build/Release+Asserts/bin/llvm-ar -rc $(BUILD_DIR)/static/x86/libwebrtc.a `find . -name '*.o'`
+	
+	cd $(BUILD_DIR)/static/x86_64/obj && \
+	rm -f sdk/android/libjingle_peerconnection_so/jni_onload.o && \
+	$(SRC_DIR)/third_party/llvm-build/Release+Asserts/bin/llvm-ar -rc $(BUILD_DIR)/static/x86_64/libwebrtc.a `find . -name '*.o'`
 
 	cd $(BUILD_DIR) && \
 	unzip -q libwebrtc.aar && \
