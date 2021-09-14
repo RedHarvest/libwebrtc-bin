@@ -29,9 +29,13 @@ copy:
 	mkdir -p $(PACKAGE_DIR)/jar
 	mkdir -p $(PACKAGE_DIR)/lib/armeabi-v7a
 	mkdir -p $(PACKAGE_DIR)/lib/arm64-v8a
+	mkdir -p $(PACKAGE_DIR)/lib/x86
+	mkdir -p $(PACKAGE_DIR)/lib/x86_64
 	mkdir -p $(PACKAGE_DIR)/include
 	cp -f $(BUILD_DIR)/static/armeabi-v7a/libwebrtc.a $(PACKAGE_DIR)/lib/armeabi-v7a/
 	cp -f $(BUILD_DIR)/static/arm64-v8a/libwebrtc.a $(PACKAGE_DIR)/lib/arm64-v8a/
+	cp -f $(BUILD_DIR)/static/x86/libwebrtc.a $(PACKAGE_DIR)/lib/x86/
+	cp -f $(BUILD_DIR)/static/x86_64/libwebrtc.a $(PACKAGE_DIR)/lib/x86_64/
 	cp -f $(BUILD_DIR)/libwebrtc.jar $(PACKAGE_DIR)/jar/
 	cp -f $(BUILD_DIR)/libwebrtc.aar $(PACKAGE_DIR)/aar/
 	rsync -amv '--include=*/' '--include=*.h' '--include=*.hpp' '--exclude=*' $(SRC_DIR)/. $(PACKAGE_DIR)/include/.
