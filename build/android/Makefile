@@ -29,13 +29,13 @@ copy:
 	mkdir -p $(PACKAGE_DIR)/jar
 	mkdir -p $(PACKAGE_DIR)/lib/armeabi-v7a
 	mkdir -p $(PACKAGE_DIR)/lib/arm64-v8a
-	mkdir -p $(PACKAGE_DIR)/lib/x86
 	mkdir -p $(PACKAGE_DIR)/lib/x86_64
+	mkdir -p $(PACKAGE_DIR)/lib/x86
 	mkdir -p $(PACKAGE_DIR)/include
 	cp -f $(BUILD_DIR)/static/armeabi-v7a/libwebrtc.a $(PACKAGE_DIR)/lib/armeabi-v7a/
 	cp -f $(BUILD_DIR)/static/arm64-v8a/libwebrtc.a $(PACKAGE_DIR)/lib/arm64-v8a/
-	cp -f $(BUILD_DIR)/static/x86/libwebrtc.a $(PACKAGE_DIR)/lib/x86/
 	cp -f $(BUILD_DIR)/static/x86_64/libwebrtc.a $(PACKAGE_DIR)/lib/x86_64/
+	cp -f $(BUILD_DIR)/static/x86/libwebrtc.a $(PACKAGE_DIR)/lib/x86/
 	cp -f $(BUILD_DIR)/libwebrtc.jar $(PACKAGE_DIR)/jar/
 	cp -f $(BUILD_DIR)/libwebrtc.aar $(PACKAGE_DIR)/aar/
 	rsync -amv '--include=*/' '--include=*.h' '--include=*.hpp' '--exclude=*' $(SRC_DIR)/. $(PACKAGE_DIR)/include/.
@@ -67,35 +67,16 @@ build: patch
 	python3 $(SRC_DIR)/tools_webrtc/android/build_aar.py \
 	  --build-dir $(BUILD_DIR)/aar \
 	  --output $(BUILD_DIR)/libwebrtc.aar \
-	  --arch armeabi-v7a arm64-v8a x86 x86_64 \
+	  --arch armeabi-v7a arm64-v8a x86_64 x86 \
 	  --extra-gn-args '$(CC_WRAPPER) is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true'
 
 	$(call build-android,armeabi-v7a,arm,arm_version=7)
 	$(call build-android,arm64-v8a,arm64)
 	$(call build-android,x86_64,x64)
-	
-	cd $(SRC_DIR) && \
-	vpython3 $(DEPOT_TOOLS_DIR)/gn.py gen $(BUILD_DIR)/static/x86 --args='$(CC_WRAPPER) target_os="android" target_cpu="x86" is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false use_custom_libcxx=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true' && \
-	ninja -C $(BUILD_DIR)/static/x86 && \
-	ninja -C $(BUILD_DIR)/static/x86 native_api
-	
-	cd $(SRC_DIR) && \
-	vpython3 $(DEPOT_TOOLS_DIR)/gn.py gen $(BUILD_DIR)/static/x86_64 --args='$(CC_WRAPPER) target_os="android" target_cpu="x64" is_debug=false $(RTC_USE_H264) rtc_build_tools=false rtc_build_examples=false rtc_include_tests=false use_custom_libcxx=false is_clang=true is_component_build=false rtc_enable_protobuf=false rtc_build_json=true use_rtti=true' && \
-	ninja -C $(BUILD_DIR)/static/x86_64 && \
-	ninja -C $(BUILD_DIR)/static/x86_64 native_api
-
-	
-	cd $(BUILD_DIR)/static/x86/obj && \
-	rm -f sdk/android/libjingle_peerconnection_so/jni_onload.o && \
-	$(SRC_DIR)/third_party/llvm-build/Release+Asserts/bin/llvm-ar -rc $(BUILD_DIR)/static/x86/libwebrtc.a `find . -name '*.o'`
-	
-	cd $(BUILD_DIR)/static/x86_64/obj && \
-	rm -f sdk/android/libjingle_peerconnection_so/jni_onload.o && \
-	$(SRC_DIR)/third_party/llvm-build/Release+Asserts/bin/llvm-ar -rc $(BUILD_DIR)/static/x86_64/libwebrtc.a `find . -name '*.o'`
+	$(call build-android,x86,x86)
 
 	cd $(BUILD_DIR) && \
 	unzip -q libwebrtc.aar && \
 	rm -rf jni && \
 	rm -f AndroidManifest.xml && \
 	mv classes.jar libwebrtc.jar
-
