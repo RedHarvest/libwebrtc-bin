@@ -20,14 +20,16 @@ package:
 
 .PHONY: patch
 patch: common-patch
+	echo "apply iOS patches ..." \
+	&& cd $(SRC_DIR) \
+	&& patch -p1 < $(PATCH_DIR)/ios_disable_mllvm.patch \
+	&& patch -p1 < $(PATCH_DIR)/fix_assert_xcode_version_for_ios.patch
 
 .PHONY: build
 build: patch
 	cd $(SRC_DIR)/tools_webrtc/ios && \
-	vpython3 build_ios_libs.py -o $(BUILD_DIR) --build_config release --bitcode --extra-gn-args '\
-	  use_xcode_clang=true \
+	python3 build_ios_libs.py -o $(BUILD_DIR) --build_config release --bitcode --extra-gn-args '\
 	  use_rtti=true \
-	  enable_dsyms=true \
 	  rtc_libvpx_build_vp9=true \
 	  rtc_include_tests=false \
 	  rtc_build_tools=false \

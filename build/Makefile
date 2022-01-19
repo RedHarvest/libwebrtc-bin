@@ -1,5 +1,8 @@
 include ../VERSION
 
+LC_ALL = C
+export LC_ALL
+
 BASE_DIR := $(CURDIR)/..
 
 include ./env.mk
@@ -28,9 +31,10 @@ $(CCACHE):
 	&& cd $(THIRD_PARTY_DIR)/ccache-$(CCACHE_VERSION) \
 	&& mkdir build \
 	&& cd build \
-	&& cmake -DCMAKE_BUILD_TYPE=Release .. \
+	&& cmake -DZSTD_FROM_INTERNET=ON -DHIREDIS_FROM_INTERNET=ON -DCMAKE_BUILD_TYPE=Release .. \
 	&& make \
 	&& mv ccache $(CCACHE) \
+	&& ln -sf $(CCACHE) $(THIRD_PARTY_DIR)/ccache \
 	&& cd $(THIRD_PARTY_DIR) \
 	&& rm -rf ccache.tar.gz ccache-$(CCACHE_VERSION)
 else
