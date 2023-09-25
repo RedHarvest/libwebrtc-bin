@@ -42,10 +42,12 @@ copy:
 	mkdir -p $(PACKAGE_DIR)/jar
 	mkdir -p $(PACKAGE_DIR)/lib/armeabi-v7a
 	mkdir -p $(PACKAGE_DIR)/lib/arm64-v8a
+	mkdir -p $(PACKAGE_DIR)/lib/x86
 	mkdir -p $(PACKAGE_DIR)/lib/x86_64
 	mkdir -p $(PACKAGE_DIR)/include
 	cp -f $(BUILD_DIR)/static/armeabi-v7a/libwebrtc.a $(PACKAGE_DIR)/lib/armeabi-v7a/
 	cp -f $(BUILD_DIR)/static/arm64-v8a/libwebrtc.a $(PACKAGE_DIR)/lib/arm64-v8a/
+	cp -f $(BUILD_DIR)/static/x86/libwebrtc.a $(PACKAGE_DIR)/lib/x86/
 	cp -f $(BUILD_DIR)/static/x86_64/libwebrtc.a $(PACKAGE_DIR)/lib/x86_64/
 	cp -f $(BUILD_DIR)/libwebrtc.jar $(PACKAGE_DIR)/jar/
 	cp -f $(BUILD_DIR)/libwebrtc.aar $(PACKAGE_DIR)/aar/
@@ -80,11 +82,12 @@ build: patch
 	vpython3 $(SRC_DIR)/tools_webrtc/android/build_aar.py \
 	  --build-dir $(BUILD_DIR)/aar \
 	  --output $(BUILD_DIR)/libwebrtc.aar \
-	  --arch armeabi-v7a arm64-v8a x86_64 \
+	  --arch armeabi-v7a arm64-v8a x86 x86_64 \
 	  --extra-gn-args '$(EXTRA_GN_ARGS) $(CC_WRAPPER)'
 
 	$(call build-android,armeabi-v7a,arm,arm_version=7)
 	$(call build-android,arm64-v8a,arm64)
+	$(call build-android,x86,x86)
 	$(call build-android,x86_64,x64)
 
 	cd $(BUILD_DIR) && \
